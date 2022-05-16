@@ -2,6 +2,7 @@
   "extends": "./node_modules/@connectedcars/setup/tsconfig",
   // All paths need to reset or they would be pointing to ./node_modules/@connectedcars/setup
   "compilerOptions": {
+    "lib": ["dom"],
     "outDir": "build/dist",
     "rootDir": "./"
   },
