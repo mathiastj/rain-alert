@@ -25,7 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Send Push Notification
       - uses: techulus/push-github-action@1.0.0
         env:
           API_KEY: ${{ secrets.TECHULUS_API_KEY }}
