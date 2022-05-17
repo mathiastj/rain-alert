@@ -27,7 +27,7 @@ jobs:
           
       # install dependencies
       - name: install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install
         
       # run the rain checker puppeteer test
       - name: test
