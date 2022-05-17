@@ -1,0 +1,72 @@
+name: Daily rain alert
+
+on:
+  schedule:
+    - cron:  '12,42 11-16 * * MON-FRI'
+  # “At minute 12 and 42 past every hour from 11 through 16 on every day-of-week from Monday through Friday.”
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Supposedly good for running puppeteer
+    container: lironavon/docker-puppeteer-container:14.16.0
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      # Checks out other branches and commits as well
+        with:
+          fetch-depth: 0
+      
+      # Change branch to the one where I keep the state
+      - name: Change branch
+        run: |
+          git config --global user.name 'mathiastj'
+          git config --global user.email 'mathiastj@users.noreply.github.com'
+          git switch did-run
+      
+      # Check if it has already alerted today, based on whether a file is present
+      - name: "Check file existence"
+        run: |
+          # make file runnable, might not be necessary
+          chmod +x "${GITHUB_WORKSPACE}/bin/check-file-exists.sh"
+          
+          # run script
+          "${GITHUB_WORKSPACE}/bin/check-file-exists.sh"
+
+      # Cache the dependencies from any node_modules directory
+      - name: cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: node_modules-${{ hashFiles('**/package-lock.json')}}
+          
+      # Install dependencies
+      - name: install dependencies
+        run: npm install
+        
+      # Run the rain checker puppeteer test
+      - name: test
+        run: npm test
+
+      # Add the state file for today since we're about to send a rain notification 
+      - name: Add file for today to git
+        run: |
+          touch ./alerts/$(/bin/date +"%Y-%m-%d")
+          git config --global user.name 'mathiastj'
+          git config --global user.email 'mathiastj@users.noreply.github.com'
+          git add alerts/
+          git commit -m "Add state file for today"
+          git push
+
+      # Use Techulus to send a push notification to an app
+      - name: Send a push notification
+        uses: techulus/push-github-action@1.0.0
+        env:
+          API_KEY: ${{ secrets.TECHULUS_API_KEY }}
+          MESSAGE: "It's going to rain!"
+      
