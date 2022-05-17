@@ -24,7 +24,7 @@ jobs:
         run: |
           git config --global user.name 'mathiastj'
           git config --global user.email 'mathiastj@users.noreply.github.com'
-          git switch did-run
+          git checkout did-run
       
       - name: "Check file existence"
         run: |
