@@ -33,4 +33,8 @@ jobs:
           
           # run script
           "${GITHUB_WORKSPACE}/bin/check-file-exists.sh"
+          
+      - name: Not run if previous failed
+        run: |
+          echo ran
       
