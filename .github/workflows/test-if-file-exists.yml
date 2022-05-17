@@ -34,7 +34,10 @@ jobs:
           # run script
           "${GITHUB_WORKSPACE}/bin/check-file-exists.sh"
           
-      - name: Add file for today if it does not exist
+      - name: Add file for today if it does not exist and add to git
         run: |
           touch ./alerts/$(/bin/date +"%Y-%m-%d")
+          git add alerts/
+          git commit -m "Add file for today" || true
+          git push || true
       
