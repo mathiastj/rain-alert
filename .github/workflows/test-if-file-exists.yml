@@ -17,12 +17,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Change branch
         run: |
           git config --global user.name 'mathiastj'
           git config --global user.email 'mathiastj@users.noreply.github.com'
-          git checkout did-run --
+          git switch did-run
       
       - name: "Check file existence"
         run: |
