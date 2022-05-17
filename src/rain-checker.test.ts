@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer'
 
 const browserConfig = {
-  headless: false, // TODO: Change to true
+  headless: true,
   devtools: false,
   args: ['--no-sandbox', '--disable-setuid-sandbox'] // For running on debian in docker
 }
@@ -28,6 +28,7 @@ describe('Check for rain', () => {
     await page.mouse.move(1530, 835)
     await page.mouse.up()
 
+    // Get the canvas and find a single pixel around Copenhagen
     const pixel = await page.evaluate(() => {
       const canvas = <HTMLCanvasElement>(
         document.evaluate(
@@ -48,22 +49,17 @@ describe('Check for rain', () => {
       }
       const pixel = context.getImageData(705, 407, 1, 1).data
 
-      // pixel.r = pixel[0]
-      // pixel.g = pixel[1]
-      // pixel.b = pixel[2]
-      // pixel.a = pixel[3]
-
       return pixel
     })
     console.log(pixel)
 
-    if (pixel.length === 0) {
-      return // fail
+    if (!pixel) {
+      fail()
     }
 
-    if (pixel[0] !== 255 || pixel[1] !== 255 || pixel[2] !== 255) {
-      // probably rain
-    }
+    // It's usually rgb (255,255,255), white, that is no rain.
+    // Make the test pass if there is some form of rain and fail if there is no rain
+    expect(pixel).not.toMatchObject({ 0: 255, 1: 255, 2: 255 })
   })
 })
 
