@@ -34,7 +34,7 @@ jobs:
           # run script
           "${GITHUB_WORKSPACE}/bin/check-file-exists.sh"
           
-      - name: Not run if previous failed
+      - name: Add file for today if it does not exist
         run: |
-          echo ran
+          touch ./alerts/$(/bin/date +"%Y-%m-%d")
       
