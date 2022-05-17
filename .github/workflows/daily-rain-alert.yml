@@ -27,7 +27,7 @@ jobs:
         run: |
           git config --global user.name 'mathiastj'
           git config --global user.email 'mathiastj@users.noreply.github.com'
-          git switch did-run
+          git checkout did-run
       
       # Check if it has already alerted today, based on whether a file is present
       - name: "Check file existence"
